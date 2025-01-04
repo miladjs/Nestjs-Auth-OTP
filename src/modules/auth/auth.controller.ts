@@ -1,7 +1,16 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CheckOtpDto, SendOtpDto } from "./dto/auth.dto";
 import { ResponseModel } from "src/common/ResponseModel";
+import { Request } from "express";
+import { AuthGuard } from "./guards/auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -35,5 +44,11 @@ export class AuthController {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  @Post("/profile")
+  @UseGuards(AuthGuard)
+  Profile(@Req() request: Request) {
+    return request.user;
   }
 }

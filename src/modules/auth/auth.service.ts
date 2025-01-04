@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../user/entities/user.entity";
 import { Repository } from "typeorm";
@@ -54,7 +58,6 @@ export class AuthService {
         { mobile_verify: true }
       );
     }
-    console.log(this.configService.get("Jwt.refreshTokenSecret"));
 
     const AccessToken = this.jwtService.sign(
       { id: user.id, mobile },
@@ -92,5 +95,22 @@ export class AuthService {
     user.otpId = otp.id;
     await this.userRepository.save(user);
     return otp.code;
+  }
+
+  async ValidationToken(token: string) {
+    try {
+      const payload = await this.jwtService.verify(token, {
+        secret: this.configService.get("Jwt.accessTokenSecret"),
+      });
+      if (typeof payload == "object" && payload?.id) {
+        const user = await this.userRepository.findOneBy({ id: payload.id });
+        if (!user)
+          throw new UnauthorizedException("Please login to access this route.");
+        return user;
+      }
+      throw new UnauthorizedException("Invalid token");
+    } catch (error) {
+      throw new UnauthorizedException("Invalid token");
+    }
   }
 }
