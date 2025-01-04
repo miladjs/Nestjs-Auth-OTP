@@ -1,99 +1,184 @@
+# NestJS OTP Authentication System
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<p align="center">An advanced OTP authentication system built with NestJS</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- OTP Authentication via Mobile
+- JWT-based Access Control with Guards
+- Iranian Mobile Number Validation
+- JWT Token Management
+- Modular and Scalable Architecture
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Structure
 
-## Project setup
-
-```bash
-$ npm install
+```
+src/
+├── auth/
+│   ├── dto/
+│   │   └── auth.dto.ts         # Authentication DTOs
+│   ├── guards/
+│   │   └── auth.guard.ts       # Route protection guard
+│   ├── auth.controller.ts      # OTP management controller
+│   └── auth.service.ts         # Core authentication service
+├── user/
+│   └── user.controller.ts      # User profile controller
+└── common/
+    └── ResponseModel.ts        # Unified API response model
 ```
 
-## Compile and run the project
+## API Endpoints
 
-```bash
-# development
-$ npm run start
+### Authentication
+```typescript
+POST /auth/send-otp
+Body: {
+  "mobile": "09123456789"  // Iranian mobile number
+}
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+POST /auth/check-otp
+Body: {
+  "mobile": "09123456789",
+  "code": "12345"         // Received OTP code
+}
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+### User Profile
+```typescript
+GET /user/profile          // Requires JWT token
+Headers: {
+  "Authorization": "Bearer <token>"
+}
 ```
 
-## Deployment
+## Validation Rules
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- Mobile: Iranian phone number format
+- OTP Code: 5-character string
+- Token: Valid JWT in Authorization header
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Installation & Setup
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Install dependencies
+npm install
+
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Environment Variables
 
-## Resources
+Create a `.env` file in the root directory:
 
-Check out a few resources that may come in handy when working with NestJS:
+```env
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=1d
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Guard Usage Example
 
-## Support
+```typescript
+@Controller('protected-route')
+@UseGuards(AuthGuard)
+export class ProtectedController {
+  @Get()
+  getData(@Req() request: Request) {
+    const user = request.user;
+    // Your protected route logic
+  }
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Response Examples
 
-## Stay in touch
+### Successful OTP Send
+```json
+{
+  "statusCode": 201,
+  "message": "send otp is successful",
+  "data": {
+    "mobile": "09123456789"
+  }
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Successful Login
+```json
+{
+  "statusCode": 200,
+  "message": "Login is successful",
+  "data": {
+    "access_token": "eyJhbG..."
+  }
+}
+```
+
+## Error Handling
+
+The system includes comprehensive error handling for:
+- Invalid mobile numbers
+- Incorrect OTP codes
+- Invalid or expired JWT tokens
+- Unauthorized access attempts
+
+## Security Features
+
+1. **Token Validation**
+   - JWT format verification
+   - Bearer token scheme enforcement
+   - Automatic token validation in guards
+
+2. **OTP Security**
+   - 5-digit numeric codes
+   - Mobile number validation
+   - Rate limiting (implementation required)
+
+3. **Request Validation**
+   - DTO-based validation
+   - Class-validator implementation
+   - Custom validation pipes
+
+## Development Guidelines
+
+1. **Controllers**
+   - Use appropriate HTTP methods
+   - Implement response model pattern
+   - Proper error handling with exceptions
+
+2. **DTOs**
+   - Implement validation decorators
+   - Use transformation when needed
+   - Proper error messages
+
+3. **Guards**
+   - Implement proper token extraction
+   - Handle all error cases
+   - Type safety implementation
+
+## Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
+
+## Upcoming Features
+
+- Refresh token implementation
+- Rate limiting for OTP requests
+- Email OTP support
+- Multiple factor authentication
+- Session management
